@@ -1,0 +1,17 @@
+Source: microcom
+Section: comm
+Priority: extra
+Maintainer: Alexander Reichle-Schmehl <tolimar@debian.org>
+Build-Depends: debhelper (>= 7), docbook-to-man
+Standards-Version: 3.8.1
+Homepage: http://git.pengutronix.de/?p=tools/microcom;a=summary
+
+Package: microcom
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: minimalistic terminal program
+ microcom is a minimalistic terminal program for accessing devices (e.g.
+ switches) via a serial connection.  It features connection via RS232
+ serial interfaces (including setting of transferrates) as well as in
+ "telnetmode" as specified in rfc2217.
+

@@ -1,0 +1,5 @@
+microcom (2009.6-1) unstable; urgency=low
+
+  * Initial release (Closes: #532975)
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Sat, 13 Jun 2009 13:45:04 +0200
