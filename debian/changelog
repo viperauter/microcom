@@ -1,3 +1,16 @@
+microcom (2012.02.20-1) unstable; urgency=low
+
+  * New upstream release
+    * Add libreadline6-dev to build-depends
+    * Add new option to manpage
+  * Fix Upstream URL in debian/control (Closes: #631604)
+  * Bump Standards Version to 3.9.3 (no changes necessary)
+  * Build with hardening buildflags
+    * Add dpkg-dev (>= 1.16.1~) to build-depends
+  * Fix typo in manpage found by lintian
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Thu, 14 Jun 2012 10:35:08 +0200
+
 microcom (2009.6-1) unstable; urgency=low
 
   * Initial release (Closes: #532975)

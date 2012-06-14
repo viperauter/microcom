@@ -25,9 +25,8 @@
 
 #include "microcom.h"
 
-int crnl_mapping;		//0 - no mapping, 1 mapping
-struct termios pots;		/* old port termios settings to restore */
-char lockfile[PATH_MAX+1] = "/var/lock/LCK..";
+static struct termios pots;		/* old port termios settings to restore */
+static char *lockfile;
 
 static void init_comm(struct termios *pts)
 {
@@ -45,7 +44,6 @@ static void init_comm(struct termios *pts)
 	 *  no CR -> NL mapping on input.
 	 */
 	pts->c_oflag &= ~ONLCR;
-	crnl_mapping = 0;
 	pts->c_iflag &= ~ICRNL;
 }
 
@@ -89,13 +87,27 @@ static int serial_set_flow(struct ios_ops *ios, int flow)
 	return 0;
 }
 
+static int serial_send_break(struct ios_ops *ios)
+{
+	tcsendbreak(ios->fd, 0);
+
+	return 0;
+}
+
+/* unlink the lockfile */
+static void serial_unlock()
+{
+	if (lockfile)
+		unlink(lockfile);
+}
+
 /* restore original terminal settings on exit */
 static void serial_exit(struct ios_ops *ios)
 {
 	tcsetattr(ios->fd, TCSANOW, &pots);
 	close(ios->fd);
 	free(ios);
-	unlink(lockfile);
+	serial_unlock();
 }
 
 struct ios_ops * serial_init(char *device)
@@ -109,9 +121,13 @@ struct ios_ops * serial_init(char *device)
 	ops = malloc(sizeof(*ops));
 	if (!ops)
 		return NULL;
+	lockfile = malloc(PATH_MAX);
+	if (!lockfile)
+		return NULL;
 
 	ops->set_speed = serial_set_speed;
 	ops->set_flow = serial_set_flow;
+	ops->send_break = serial_send_break;
 	ops->exit = serial_exit;
 
 	/* check lockfile */
@@ -121,28 +137,41 @@ struct ios_ops * serial_init(char *device)
 	else
 		substring = device;
 
-	strncat(lockfile, substring, PATH_MAX - strlen(lockfile) - 1);
+	sprintf(lockfile, "/var/lock/LCK..%s", substring);
 
 	fd = open(lockfile, O_RDONLY);
-	if (fd >= 0) {
+	if (fd >= 0 && !opt_force) {
 		close(fd);
 		main_usage(3, "lockfile for port exists", device);
 	}
 
+	if (fd >= 0 && opt_force) {
+		close(fd);
+		printf("lockfile for port exists, ignoring\n");
+		serial_unlock();
+	}
+
 	fd = open(lockfile, O_RDWR | O_CREAT, 0444);
+	if (fd < 0 && opt_force) {
+		printf("cannot create lockfile. ignoring\n");
+		lockfile = NULL;
+		goto force;
+	}
 	if (fd < 0)
 		main_usage(3, "cannot create lockfile", device);
 	/* Kermit wants binary pid */
 	pid = getpid();
 	write(fd, &pid, sizeof(long));
 	close(fd);
-
+force:
 	/* open the device */
 	fd = open(device, O_RDWR);
 	ops->fd = fd;
 
-	if (fd < 0)
+	if (fd < 0) {
+		serial_unlock();
 		main_usage(2, "cannot open device", device);
+	}
 
 	/* modify the port configuration */
 	tcgetattr(fd, &pts);

@@ -69,6 +69,8 @@ manpage.1: manpage.sgml
 
       <arg><option>-t <replaceable>host:port</replaceable></option></arg>
 
+      <arg><option>-c <replaceable>interface:rx_id:tx_id</replaceable></option></arg>
+
     </cmdsynopsis>
   </refsynopsisdiv>
   <refsect1>
@@ -88,7 +90,7 @@ manpage.1: manpage.sgml
     rfc2217.</para>
 
     <para>The default escape character is crtl-\. You may enter the
-    programm menu with the escape character followed by c.  You may leave
+    program menu with the escape character followed by c.  You may leave
     the program by the escape character followed by q.</para>
 
   </refsect1>
@@ -131,6 +133,14 @@ manpage.1: manpage.sgml
         </term>
         <listitem>
           <para>work in telnet (rfc2217) mode.</para>
+        </listitem>
+      </varlistentry>
+      <varlistentry>
+        <term><option>-c</option>
+          <option>--can</option>
+        </term>
+        <listitem>
+          <para>work in CAN mode (default: (can0:200:200))</para>
         </listitem>
       </varlistentry>
       <varlistentry>
