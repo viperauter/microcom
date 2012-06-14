@@ -1,3 +1,11 @@
+microcom (2012.06.0-1) unstable; urgency=low
+
+  [ The "Oh god, it is bein used" release ]
+  * New upstream release
+  * Really fix Upstream URL
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Thu, 14 Jun 2012 15:06:47 +0200
+
 microcom (2012.02.20-1) unstable; urgency=low
 
   * New upstream release
