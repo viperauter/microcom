@@ -1,3 +1,12 @@
+microcom (2012.06.0-2) unstable; urgency=low
+
+  * Make the package arch: linux-any, as the new upsteam release only
+    supports linux so far: CAN support seems to be only available on
+    linux and can currently not be disabled at compile time.
+    (Closes: #677641)
+
+ -- Alexander Reichle-Schmehl <tolimar@debian.org>  Fri, 15 Jun 2012 21:20:06 +0200
+
 microcom (2012.06.0-1) unstable; urgency=low
 
   [ The "Oh god, it is bein used" release ]

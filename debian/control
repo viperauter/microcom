@@ -7,7 +7,7 @@ Standards-Version: 3.9.3
 Homepage: http://git.pengutronix.de/?p=tools/microcom.git;a=tags
 
 Package: microcom
-Architecture: any
+Architecture: linux-any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: minimalistic terminal program
  microcom is a minimalistic terminal program for accessing devices (e.g.
