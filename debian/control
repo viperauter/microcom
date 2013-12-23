@@ -1,7 +1,7 @@
 Source: microcom
 Section: comm
 Priority: extra
-Maintainer: Debian QA Group <packages@qa.debian.org>
+Maintainer: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 Build-Depends: debhelper (>= 9), docbook-to-man, libreadline6-dev, dpkg-dev (>= 1.16.1~)
 Standards-Version: 3.9.4
 Homepage: http://git.pengutronix.de/?p=tools/microcom.git;a=tags

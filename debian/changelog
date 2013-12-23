@@ -1,3 +1,10 @@
+microcom (2012.06.0-4) UNRELEASED; urgency=low
+
+  * Adopt package (Closes: #726551)
+    Thanks Alex!
+
+ -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 23 Dec 2013 21:26:45 +0100
+
 microcom (2012.06.0-3) unstable; urgency=low
 
   * Orphan package
