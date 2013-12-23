@@ -2,6 +2,7 @@ microcom (2012.06.0-4) UNRELEASED; urgency=low
 
   * Adopt package (Closes: #726551)
     Thanks Alex!
+  * Standards-Version: 3.9.5 (no changes needed)
 
  -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 23 Dec 2013 21:26:45 +0100
 
