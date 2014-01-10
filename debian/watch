@@ -1,0 +1,8 @@
+# upstream doesn't provide tarballs, only tags in git.
+# Note that the .tar.gz that uscan downloads here isn't used as orig.tar.gz
+# because the prefix argument given to git-archive by gitweb makes the v from
+# the tag leak into the tarred directory name. See debian/rules'
+# get-orig-source target instead.
+version=3
+
+opts=downloadurlmangle=s/a=shortlog/a=snapshot/,filenamemangle=s/.*h=refs\/tags\/v(.*)/microcom-$1.tar.gz/ http://git.pengutronix.de/?p=tools/microcom.git;a=tags /\?p=tools/microcom.git;a=shortlog;h=refs/tags/v(20[0-9.]*)
