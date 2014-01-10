@@ -4,7 +4,7 @@ microcom (2014.01.0-1) UNRELEASED; urgency=low
     Thanks Alex!
   * Standards-Version: 3.9.5 (no changes needed)
   * new upstream version (Closes: #678303, #698436, #706931)
-  * modernisation of packaging (use 3.0 (quilt))
+  * modernisation of packaging (use 3.0 (quilt), dh)
 
  -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 23 Dec 2013 21:26:45 +0100
 
