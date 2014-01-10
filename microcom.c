@@ -29,8 +29,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-int dolog;			/* log active flag */
-FILE *flog;			/* log file */
 static struct termios sots;	/* old stdout/in termios settings to restore */
 
 struct ios_ops *ios;
@@ -43,7 +41,7 @@ void init_terminal(void)
 	memcpy(&sts, &sots, sizeof (sots));     /* to be used upon exit */
 
 	/* again, some arbitrary things */
-	sts.c_iflag &= ~BRKINT;
+	sts.c_iflag &= ~(IGNCR | INLCR | ICRNL);
 	sts.c_iflag |= IGNBRK;
 	sts.c_lflag &= ~ISIG;
 	sts.c_cc[VMIN] = 1;
@@ -118,12 +116,6 @@ void microcom_exit(int signal)
 {
 	printf("exiting\n");
 
-	/* close the log file first */
-	if (dolog) {
-		fflush(flog);
-		fclose(flog);
-	}
-
 	ios->exit(ios);
 	tcsetattr(STDIN_FILENO, TCSANOW, &sots);
 
@@ -152,7 +144,8 @@ void main_usage(int exitcode, char *str, char *dev)
 		"    -t host:port                work in telnet (rfc2217) mode\n"
 		"    -c interface:rx_id:tx_id    work in CAN mode\n"
 		"                                default: (%s:%x:%x)\n"
-		"microcom provides session logging in microcom.log file\n",
+		"    -f                          ignore existing lock file\n"
+		"    -d                          output debugging info\n"
 		DEFAULT_DEVICE, DEFAULT_BAUDRATE,
 		DEFAULT_CAN_INTERFACE, DEFAULT_CAN_ID, DEFAULT_CAN_ID);
 	fprintf(stderr, "Exitcode %d - %s %s\n\n", exitcode, str, dev);
@@ -250,6 +243,7 @@ int main(int argc, char *argv[])
 	sigaction(SIGINT, &sact, NULL);
 	sigaction(SIGPIPE, &sact, NULL);
 	sigaction(SIGTERM, &sact, NULL);
+	sigaction(SIGQUIT, &sact, NULL);
 
 	/* run thhe main program loop */
 	mux_loop(ios);
