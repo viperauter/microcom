@@ -13,9 +13,6 @@ License: GPL-2+
 Files: commands.c commands_fsl_imx.c parser.c
 Copyright: (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
 License: GPL-2+
-Comment: The copyright is only contained in an post-2014.01.0 commit in the
-  upstream repository, namely b1bd22603610 (Add explicit copyright and license
-  to three files
 
 Files: gitlog2changelog.py
 Copyright: 2008 Marcus D. Hanwell <marcus@cryos.org>

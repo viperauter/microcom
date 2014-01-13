@@ -1,4 +1,4 @@
-microcom (2014.01.0-1) UNRELEASED; urgency=low
+microcom (2014.01.1-1) UNRELEASED; urgency=low
 
   * Adopt package (Closes: #726551)
     Thanks Alex!
