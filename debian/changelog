@@ -1,11 +1,17 @@
 microcom (2014.01.1-1) UNRELEASED; urgency=low
 
-  * Adopt package (Closes: #726551)
-    Thanks Alex!
+  * Adopt package (Closes: #726551) - Thanks Alex!
   * Standards-Version: 3.9.5 (no changes needed)
-  * new upstream version (Closes: #678303, #698436, #706931)
-  * modernisation of packaging (use 3.0 (quilt), dh, add watch file,
-    machine-readable copyright format, add Vcs-Git to control)
+  * New upstream release
+    + Fix order of parameters to ld (Closes: #678303, commit:c922d74644d9)
+    + Add manpage (Closes: #698436, commit:cf57915cd3c7)
+    + Fix newline handling (Closes: #706931, commit:938404e757b2)
+  * Modernisation of packaging
+    + Use source format 3.0 (quilt)
+    + Simplify debian/rules using dh 7
+    + Add debian/watch file
+    + Convert to machine-readable copyright format 1.0
+    + Add Vcs-Git URLs
 
  -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 23 Dec 2013 21:26:45 +0100
 
@@ -19,8 +25,8 @@ microcom (2012.06.0-3) unstable; urgency=low
 microcom (2012.06.0-2) unstable; urgency=low
 
   * Make the package arch: linux-any, as the new upsteam release only
-    supports linux so far: CAN support seems to be only available on
-    linux and can currently not be disabled at compile time.
+    supports Linux so far: CAN support seems to be only available on
+    Linux and can currently not be disabled at compile time.
     (Closes: #677641)
 
  -- Alexander Reichle-Schmehl <tolimar@debian.org>  Fri, 15 Jun 2012 21:20:06 +0200
@@ -29,19 +35,19 @@ microcom (2012.06.0-1) unstable; urgency=low
 
   [ The "Oh god, it is bein used" release ]
   * New upstream release
-  * Really fix Upstream URL
+  * Really fix upstream URL
 
  -- Alexander Reichle-Schmehl <tolimar@debian.org>  Thu, 14 Jun 2012 15:06:47 +0200
 
 microcom (2012.02.20-1) unstable; urgency=low
 
   * New upstream release
-    * Add libreadline6-dev to build-depends
-    * Add new option to manpage
-  * Fix Upstream URL in debian/control (Closes: #631604)
+    + Add libreadline6-dev to Build-Depends
+    + Add new option to manpage
+  * Fix upstream URL in debian/control (Closes: #631604)
   * Bump Standards Version to 3.9.3 (no changes necessary)
   * Build with hardening buildflags
-    * Add dpkg-dev (>= 1.16.1~) to build-depends
+    + Add dpkg-dev (>= 1.16.1~) to Build-Depends
   * Fix typo in manpage found by lintian
 
  -- Alexander Reichle-Schmehl <tolimar@debian.org>  Thu, 14 Jun 2012 10:35:08 +0200

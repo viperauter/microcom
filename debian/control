@@ -14,5 +14,4 @@ Description: minimalistic terminal program
  microcom is a minimalistic terminal program for accessing devices (e.g.
  switches) via a serial connection.  It features connection via RS232
  serial interfaces (including setting of transferrates) as well as in
- "telnetmode" as specified in rfc2217.
-
+ "telnet mode" as specified in rfc2217.

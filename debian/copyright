@@ -1,29 +1,36 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-name: microcom
-Source: git://git.pengutronix.de/git/tools/microcom.git
+Source: http://git.pengutronix.de/?p=tools/microcom.git;a=summary
+	git://git.pengutronix.de/git/tools/microcom.git
 
 Files: debian/*
-Copyright: (C) 2014, Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Copyright: 2009-2013 Alexander Reichle-Schmehl <tolimar@debian.org>
+	2014 Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 License: GPL-2
 
 Files: can.c
-Copyright: (C) 2010 by Marc Kleine-Budde <mkl@pengutronix.de>
+Copyright: 2010 by Marc Kleine-Budde <mkl@pengutronix.de>
 License: GPL-2+
 
-Files: commands.c commands_fsl_imx.c parser.c
-Copyright: (C) 2010 Sascha Hauer <s.hauer@pengutronix.de>
+Files: commands.c
+	commands_fsl_imx.c
+	parser.c
+Copyright: 2010 Sascha Hauer <s.hauer@pengutronix.de>
 License: GPL-2+
 
 Files: gitlog2changelog.py
 Copyright: 2008 Marcus D. Hanwell <marcus@cryos.org>
 License: GPL-2+
 
-Files: microcom.c microcom.h mux.c serial.c
-Copyright: (C) 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
+Files: microcom.c
+	microcom.h
+	mux.c
+	serial.c
+Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
 License: GPL-2+
 
 Files: telnet.c
-Copyright: (C) 2008, 2009 Sascha Hauer <s.hauer@pengutronix.de>
+Copyright: 2008, 2009 Sascha Hauer <s.hauer@pengutronix.de>
 License: GPL-2+
 
 License: GPL-2
