@@ -207,17 +207,45 @@ static void cook_buf(struct ios_ops *ios, unsigned char *buf, int num)
 	return;
 }
 
+static int logfd = -1;
+
+void logfile_close(void)
+{
+	if (logfd >= 0)
+		close(logfd);
+
+	logfd = -1;
+}
+
+int logfile_open(const char *path)
+{
+	int fd;
+
+	fd = open(path, O_CREAT | O_TRUNC | O_WRONLY, 0644);
+	if (fd < 0) {
+		fprintf(stderr, "Cannot open logfile '%s': %s\n", path, strerror(errno));
+		return fd;
+	}
+
+	if (logfd >= 0)
+		logfile_close();
+
+	logfd = fd;
+
+	return 0;
+}
+
 /* main program loop */
-void mux_loop(struct ios_ops *ios)
+int mux_loop(struct ios_ops *ios)
 {
 	fd_set ready;		/* used for select */
 	int i = 0, len;		/* used in the multiplex loop */
-	int done = 0;
 	unsigned char buf[BUFSIZE];
 
-	do {			/* forever */
+	while (1) {
 		FD_ZERO(&ready);
-		FD_SET(STDIN_FILENO, &ready);
+		if (!listenonly)
+			FD_SET(STDIN_FILENO, &ready);
 		FD_SET(ios->fd, &ready);
 
 		select(ios->fd + 1, &ready, NULL, NULL, NULL);
@@ -226,24 +254,31 @@ void mux_loop(struct ios_ops *ios)
 			i = 0;
 			/* pf has characters for us */
 			len = read(ios->fd, buf, BUFSIZE);
-			if (len > 0) {
-				/*
-				 * BUG?: this is telnet specific? Check for IAC
-				 * later in buf?
-				 */
-				if (*buf == IAC)
-					i = handle_command(buf, len);
-				write(STDOUT_FILENO, buf + i, len - i);
-			} else
-				done = 1;
+			if (len < 0)
+				return -errno;
+			if (len == 0)
+				return -EINVAL;
+
+			/*
+			 * BUG?: this is telnet specific? Check for IAC
+			 * later in buf?
+			 */
+			if (*buf == IAC)
+				i = handle_command(buf, len);
+			write(STDOUT_FILENO, buf + i, len - i);
+			if (logfd >= 0)
+				write(logfd, buf + i, len - i);
 		}
-		if (FD_ISSET(STDIN_FILENO, &ready)) {
+
+		if (!listenonly && FD_ISSET(STDIN_FILENO, &ready)) {
 			/* standard input has characters for us */
 			i = read(STDIN_FILENO, buf, BUFSIZE);
-			if (i > 0)
-				cook_buf(ios, buf, i);
-			else
-				done = 1;
+			if (i < 0)
+				return -errno;
+			if (i == 0)
+				return -EINVAL;
+
+			cook_buf(ios, buf, i);
 		}
-	} while (!done);
+	}
 }

@@ -48,7 +48,7 @@ struct ios_ops {
 	int fd;
 };
 
-void mux_loop(struct ios_ops *); /* mux.c */
+int mux_loop(struct ios_ops *); /* mux.c */
 void init_terminal(void);
 void restore_terminal(void);
 
@@ -63,11 +63,12 @@ void microcom_cmd_usage(char *str);
 void main_usage(int exitcode, char *str, char *dev);
 
 int flag_to_baudrate(speed_t speed);
-speed_t baudrate_to_flag(int speed);
+int baudrate_to_flag(int speed, speed_t *flag);
 
 extern struct ios_ops *ios;
 extern int debug;
 extern int opt_force;
+extern int listenonly;
 
 struct cmd {
 	char *name;
@@ -76,6 +77,9 @@ struct cmd {
 	char *info;
 	char *help;
 };
+
+int logfile_open(const char *path);
+void logfile_close(void);
 
 int register_command(struct cmd *cmd);
 #define MICROCOM_CMD_START 100

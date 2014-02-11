@@ -11,7 +11,7 @@
 
 static int cmd_speed(int argc, char *argv[])
 {
-	int speed;
+	int speed, ret;
 	speed_t flag;
 
 	if (argc < 2) {
@@ -20,8 +20,8 @@ static int cmd_speed(int argc, char *argv[])
 	}
 
 	speed = strtoul(argv[1], NULL, 0);
-	flag = baudrate_to_flag(speed);
-	if (flag < 0) {
+	ret = baudrate_to_flag(speed, &flag);
+	if (ret) {
 		printf("invalid speed %d\n", speed);
 		return 1;
 	}
@@ -116,6 +116,18 @@ static int cmd_execute(int argc, char *argv[])
 	return do_script(argv[1]);
 }
 
+static int cmd_log(int argc, char *argv[])
+{
+	int ret;
+
+	if (argc < 2)
+		return MICROCOM_CMD_USAGE;
+
+	ret = logfile_open(argv[1]);
+
+	return ret;
+}
+
 static int cmd_comment(int argc, char *argv[])
 {
 	return 0;
@@ -153,6 +165,11 @@ static struct cmd cmds[] = {
 		.fn = cmd_execute,
 		.info = "execute a script",
 		.help = "x <scriptfile>",
+	}, {
+		.name = "log",
+		.fn = cmd_log,
+		.info = "log to file",
+		.help = "log <logfile>",
 	}, {
 		.name = "#",
 		.fn = cmd_comment,

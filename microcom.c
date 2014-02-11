@@ -58,27 +58,63 @@ void restore_terminal(void)
 	tcsetattr(STDIN_FILENO, TCSANOW, &sots);
 }
 
-speed_t baudrate_to_flag(int speed)
+int baudrate_to_flag(int speed, speed_t *flag)
 {
 	switch(speed) {
-	case 50: return B50;
-	case 75: return B75;
-	case 110: return B110;
-	case 134: return B134;
-	case 150: return B150;
-	case 200: return B200;
-	case 300: return B300;
-	case 600: return B600;
-	case 1200: return B1200;
-	case 1800: return B1800;
-	case 2400: return B2400;
-	case 4800: return B4800;
-	case 9600: return B9600;
-	case 19200: return B19200;
-	case 38400: return B38400;
-	case 57600: return B57600;
-	case 115200: return B115200;
-	case 230400: return B230400;
+	case 50: *flag = B50; return 0;
+	case 75: *flag = B75; return 0;
+	case 110: *flag = B110; return 0;
+	case 134: *flag = B134; return 0;
+	case 150: *flag = B150; return 0;
+	case 200: *flag = B200; return 0;
+	case 300: *flag = B300; return 0;
+	case 600: *flag = B600; return 0;
+	case 1200: *flag = B1200; return 0;
+	case 1800: *flag = B1800; return 0;
+	case 2400: *flag = B2400; return 0;
+	case 4800: *flag = B4800; return 0;
+	case 9600: *flag = B9600; return 0;
+	case 19200: *flag = B19200; return 0;
+	case 38400: *flag = B38400; return 0;
+	case 57600: *flag = B57600; return 0;
+	case 115200: *flag = B115200; return 0;
+	case 230400: *flag = B230400; return 0;
+#ifdef B460800
+	case 460800: *flag = B460800; return 0;
+#endif
+#ifdef B500000
+	case 500000: *flag = B500000; return 0;
+#endif
+#ifdef B576000
+	case 576000: *flag = B576000; return 0;
+#endif
+#ifdef B921600
+	case 921600: *flag = B921600; return 0;
+#endif
+#ifdef B1000000
+	case 1000000: *flag = B1000000; return 0;
+#endif
+#ifdef B1152000
+	case 1152000: *flag = B1152000; return 0;
+#endif
+#ifdef B1500000
+	case 1500000: *flag = B1500000; return 0;
+#endif
+#ifdef B2000000
+	case 2000000: *flag = B2000000; return 0;
+#endif
+#ifdef B2500000
+	case 2500000: *flag = B2500000; return 0;
+#endif
+#ifdef B3000000
+	case 3000000: *flag = B3000000; return 0;
+#endif
+#ifdef B3500000
+	case 3500000: *flag = B3500000; return 0;
+#endif
+#ifdef B4000000
+	case 4000000: *flag = B4000000; return 0;
+#endif
 	default:
 		printf("unknown speed: %d\n",speed);
 		return -1;
@@ -145,7 +181,8 @@ void main_usage(int exitcode, char *str, char *dev)
 		"    -c interface:rx_id:tx_id    work in CAN mode\n"
 		"                                default: (%s:%x:%x)\n"
 		"    -f                          ignore existing lock file\n"
-		"    -d                          output debugging info\n",
+		"    -d                          output debugging info\n"
+		"    -l <logfile>                log output to <logfile>\n",
 		DEFAULT_DEVICE, DEFAULT_BAUDRATE,
 		DEFAULT_CAN_INTERFACE, DEFAULT_CAN_ID, DEFAULT_CAN_ID);
 	fprintf(stderr, "Exitcode %d - %s %s\n\n", exitcode, str, dev);
@@ -155,15 +192,17 @@ void main_usage(int exitcode, char *str, char *dev)
 int opt_force = 0;
 int current_speed = DEFAULT_BAUDRATE;
 int current_flow = FLOW_NONE;
+int listenonly = 0;
 
 int main(int argc, char *argv[])
 {
 	struct sigaction sact;  /* used to initialize the signal handler */
-	int opt;
+	int opt, ret;
 	char *hostport = NULL;
 	int telnet = 0, can = 0;
 	char *interfaceid = NULL;
 	char *device = DEFAULT_DEVICE;
+	char *logfile = NULL;
 	speed_t flag;
 
 	struct option long_options[] = {
@@ -174,10 +213,12 @@ int main(int argc, char *argv[])
 		{ "can", required_argument, 0, 'c'},
 		{ "debug", no_argument, 0, 'd' },
 		{ "force", no_argument, 0, 'f' },
+		{ "logfile", required_argument, 0, 'l'},
+		{ "listenonly", no_argument, 0, 'o'},
 		{ 0, 0, 0, 0},
 	};
 
-	while ((opt = getopt_long(argc, argv, "hp:s:t:c:df", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "hp:s:t:c:dfl:o", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'h':
 			case '?':
@@ -202,6 +243,13 @@ int main(int argc, char *argv[])
 				break;
 			case 'd':
 				debug = 1;
+				break;
+			case 'l':
+				logfile = optarg;
+				break;
+			case 'o':
+				listenonly = 1;
+				break;
 		}
 	}
 
@@ -221,34 +269,47 @@ int main(int argc, char *argv[])
 	if (!ios)
 		exit(1);
 
-	flag = baudrate_to_flag(current_speed);
-	if (flag < 0)
+	if (logfile) {
+		ret = logfile_open(logfile);
+		if (ret < 0)
+			exit(1);
+	}
+
+	ret = baudrate_to_flag(current_speed, &flag);
+	if (ret)
 		exit(1);
 
 	current_flow = FLOW_NONE;
 	ios->set_speed(ios, flag);
 	ios->set_flow(ios, current_flow);
 
-	printf("Escape character: Ctrl-\\\n");
-	printf("Type the escape character followed by c to get to the menu or q to quit\n");
+	if (!listenonly) {
+		printf("Escape character: Ctrl-\\\n");
+		printf("Type the escape character followed by c to get to the menu or q to quit\n");
 
-	/* Now deal with the local terminal side */
-	tcgetattr(STDIN_FILENO, &sots);
-	init_terminal();
+		/* Now deal with the local terminal side */
+		tcgetattr(STDIN_FILENO, &sots);
+		init_terminal();
 
-	/* set the signal handler to restore the old
-	 * termios handler */
-	sact.sa_handler = &microcom_exit;
-	sigaction(SIGHUP, &sact, NULL);
-	sigaction(SIGINT, &sact, NULL);
-	sigaction(SIGPIPE, &sact, NULL);
-	sigaction(SIGTERM, &sact, NULL);
-	sigaction(SIGQUIT, &sact, NULL);
+		/* set the signal handler to restore the old
+		 * termios handler */
+		sact.sa_handler = &microcom_exit;
+		sigaction(SIGHUP, &sact, NULL);
+		sigaction(SIGINT, &sact, NULL);
+		sigaction(SIGPIPE, &sact, NULL);
+		sigaction(SIGTERM, &sact, NULL);
+		sigaction(SIGQUIT, &sact, NULL);
+	}
 
-	/* run thhe main program loop */
-	mux_loop(ios);
+	/* run the main program loop */
+	ret = mux_loop(ios);
+	if (ret)
+		fprintf(stderr, "%s\n", strerror(-ret));
 
-	microcom_exit(0);
+	ios->exit(ios);
 
-	return 0;
+	if (!listenonly)
+		tcsetattr(STDIN_FILENO, TCSANOW, &sots);
+
+	exit(ret ? 1 : 0);
 }
