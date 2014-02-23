@@ -1,4 +1,4 @@
-microcom (2014.02.0-1) UNRELEASED; urgency=low
+microcom (2014.02.0-1) unstable; urgency=low
 
   * Adopt package (Closes: #726551) - Thanks Alex!
   * Standards-Version: 3.9.5 (no changes needed)
@@ -13,7 +13,7 @@ microcom (2014.02.0-1) UNRELEASED; urgency=low
     + Convert to machine-readable copyright format 1.0
     + Add Vcs-Git URLs
 
- -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 23 Dec 2013 21:26:45 +0100
+ -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Sun, 23 Feb 2014 11:14:39 +0100
 
 microcom (2012.06.0-3) unstable; urgency=low
 
