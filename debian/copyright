@@ -1,11 +1,11 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-name: microcom
 Source: http://git.pengutronix.de/?p=tools/microcom.git;a=summary
-	git://git.pengutronix.de/git/tools/microcom.git
+        git://git.pengutronix.de/git/tools/microcom.git
 
 Files: debian/*
 Copyright: 2009-2013 Alexander Reichle-Schmehl <tolimar@debian.org>
-	2014 Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+           2014 Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
 License: GPL-2
 
 Files: can.c
@@ -13,8 +13,8 @@ Copyright: 2010 by Marc Kleine-Budde <mkl@pengutronix.de>
 License: GPL-2+
 
 Files: commands.c
-	commands_fsl_imx.c
-	parser.c
+       commands_fsl_imx.c
+       parser.c
 Copyright: 2010 Sascha Hauer <s.hauer@pengutronix.de>
 License: GPL-2+
 
@@ -23,9 +23,9 @@ Copyright: 2008 Marcus D. Hanwell <marcus@cryos.org>
 License: GPL-2+
 
 Files: microcom.c
-	microcom.h
-	mux.c
-	serial.c
+       microcom.h
+       mux.c
+       serial.c
 Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
 License: GPL-2+
 

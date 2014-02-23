@@ -3,9 +3,9 @@ microcom (2014.02.0-1) UNRELEASED; urgency=low
   * Adopt package (Closes: #726551) - Thanks Alex!
   * Standards-Version: 3.9.5 (no changes needed)
   * New upstream release
-    + Fix order of parameters to ld (Closes: #678303, commit:c922d74644d9)
-    + Add manpage (Closes: #698436, commit:cf57915cd3c7)
-    + Fix newline handling (Closes: #706931, commit:938404e757b2)
+    + Fix order of parameters to ld (Closes: #678303)
+    + Add manpage (Closes: #698436)
+    + Fix newline handling (Closes: #706931)
   * Modernisation of packaging
     + Use source format 3.0 (quilt)
     + Simplify debian/rules using dh 7

@@ -1,4 +1,4 @@
-#! /usr/bin/make -f
+#!/usr/bin/make -f
 
 build: build-arch build-indep
 install: build
