@@ -1,3 +1,10 @@
+microcom (2014.09.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+    + add ipv6 support to rfc2217 mode
+
+ -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 22 Sep 2014 10:26:19 +0200
+
 microcom (2014.02.0-1) unstable; urgency=low
 
   * Adopt package (Closes: #726551) - Thanks Alex!

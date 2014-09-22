@@ -19,6 +19,7 @@
 ** Rev. 1.01 - March 2000
 ** Rev. 1.02 - June 2000
 ****************************************************************************/
+#define _GNU_SOURCE
 #include "microcom.h"
 
 #include <unistd.h>
@@ -175,14 +176,19 @@ void main_usage(int exitcode, char *str, char *dev)
 {
 	fprintf(stderr, "Usage: microcom [options]\n"
 		" [options] include:\n"
-		"    -p devfile                  use the specified serial port device (%s);\n"
-		"    -s speed                    use specified baudrate (%d)\n"
-		"    -t host:port                work in telnet (rfc2217) mode\n"
-		"    -c interface:rx_id:tx_id    work in CAN mode\n"
-		"                                default: (%s:%x:%x)\n"
-		"    -f                          ignore existing lock file\n"
-		"    -d                          output debugging info\n"
-		"    -l <logfile>                log output to <logfile>\n",
+		"    -p, --port=<devfile>                 use the specified serial port device (%s);\n"
+		"    -s, --speed=<speed>                  use specified baudrate (%d)\n"
+		"    -t, --telnet=<host:port>             work in telnet (rfc2217) mode\n"
+		"    -c, --can=<interface:rx_id:tx_id>    work in CAN mode\n"
+		"                                         default: (%s:%x:%x)\n"
+		"    -f, --force                          ignore existing lock file\n"
+		"    -d, --debug                          output debugging info\n"
+		"    -l, --logfile=<logfile>              log output to <logfile>\n"
+		"    -o, --listenonly                     Do not modify local terminal, do not send input\n"
+		"                                         from stdin\n"
+		"    -a,  --answerback=<str>              specify the answerback string sent as response to\n"
+		"                                         an ENQ (ASCII 0x05) Character\n"
+		"    -h, --help                           This help\n",
 		DEFAULT_DEVICE, DEFAULT_BAUDRATE,
 		DEFAULT_CAN_INTERFACE, DEFAULT_CAN_ID, DEFAULT_CAN_ID);
 	fprintf(stderr, "Exitcode %d - %s %s\n\n", exitcode, str, dev);
@@ -215,10 +221,11 @@ int main(int argc, char *argv[])
 		{ "force", no_argument, 0, 'f' },
 		{ "logfile", required_argument, 0, 'l'},
 		{ "listenonly", no_argument, 0, 'o'},
+		{ "answerback", required_argument, 0, 'a'},
 		{ 0, 0, 0, 0},
 	};
 
-	while ((opt = getopt_long(argc, argv, "hp:s:t:c:dfl:o", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "hp:s:t:c:dfl:oi:a:", long_options, NULL)) != -1) {
 		switch (opt) {
 			case 'h':
 			case '?':
@@ -250,7 +257,16 @@ int main(int argc, char *argv[])
 			case 'o':
 				listenonly = 1;
 				break;
+			case 'a':
+				answerback = optarg;
+				break;
 		}
+	}
+
+	if (answerback) {
+		ret = asprintf(&answerback, "%s\n", answerback);
+		if (ret < 0)
+			exit (1);
 	}
 
 	commands_init();

@@ -181,6 +181,53 @@ static int handle_command(unsigned char *buf, int len)
 	return len;
 }
 
+static int logfd = -1;
+char *answerback;
+
+static void write_receive_buf(const unsigned char *buf, int len)
+{
+	if (!len)
+		return;
+
+	write(STDOUT_FILENO, buf, len);
+	if (logfd >= 0)
+		write(logfd, buf, len);
+}
+
+static void handle_receive_buf(struct ios_ops *ios, unsigned char *buf, int len)
+{
+	unsigned char *sendbuf = buf;
+	int i;
+
+	while (len) {
+		switch (*buf) {
+		case IAC:
+			/* BUG: this is telnet specific */
+			write_receive_buf(sendbuf, buf - sendbuf);
+			i = handle_command(buf, len);
+			buf += i;
+			len -= i;
+			sendbuf = buf;
+			break;
+		case 5:
+			write_receive_buf(sendbuf, buf - sendbuf);
+			if (answerback)
+				write(ios->fd, answerback, strlen(answerback));
+
+			buf += 1;
+			len -= 1;
+			sendbuf = buf;
+			break;
+		default:
+			buf += 1;
+			len -= 1;
+			break;
+		}
+	}
+
+	write_receive_buf(sendbuf, buf - sendbuf);
+}
+
 /* handle escape characters, writing to output */
 static void cook_buf(struct ios_ops *ios, unsigned char *buf, int num)
 {
@@ -204,10 +251,7 @@ static void cook_buf(struct ios_ops *ios, unsigned char *buf, int num)
 		buf += current;
 		current = 0;
 	}			/* while - end of processing all the charactes in the buffer */
-	return;
 }
-
-static int logfd = -1;
 
 void logfile_close(void)
 {
@@ -251,7 +295,6 @@ int mux_loop(struct ios_ops *ios)
 		select(ios->fd + 1, &ready, NULL, NULL, NULL);
 
 		if (FD_ISSET(ios->fd, &ready)) {
-			i = 0;
 			/* pf has characters for us */
 			len = read(ios->fd, buf, BUFSIZE);
 			if (len < 0)
@@ -259,15 +302,7 @@ int mux_loop(struct ios_ops *ios)
 			if (len == 0)
 				return -EINVAL;
 
-			/*
-			 * BUG?: this is telnet specific? Check for IAC
-			 * later in buf?
-			 */
-			if (*buf == IAC)
-				i = handle_command(buf, len);
-			write(STDOUT_FILENO, buf + i, len - i);
-			if (logfd >= 0)
-				write(logfd, buf + i, len - i);
+			handle_receive_buf(ios, buf, len);
 		}
 
 		if (!listenonly && FD_ISSET(STDIN_FILENO, &ready)) {
