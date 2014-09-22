@@ -22,12 +22,18 @@ Files: gitlog2changelog.py
 Copyright: 2008 Marcus D. Hanwell <marcus@cryos.org>
 License: GPL-2+
 
-Files: microcom.c
+Files: Makefile
+       microcom.c
        microcom.h
        mux.c
        serial.c
 Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
 License: GPL-2+
+
+Files: microcom.1
+Copyright: 2009 Alexander Reichle-Schmehl <tolimar@debian.org>
+           2013 Uwe Kleine-König <uwe@kleine-koenig.org>
+License: GPL-2
 
 Files: telnet.c
 Copyright: 2008, 2009 Sascha Hauer <s.hauer@pengutronix.de>
