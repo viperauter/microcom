@@ -1,10 +1,10 @@
-microcom (2014.09.0-1) UNRELEASED; urgency=medium
+microcom (2014.09.0-1) unstable; urgency=medium
 
   * New upstream release
     + Add IPv6 support to RFC2217 mode
   * Standards-Version: 3.9.6 (no changes needed)
 
- -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 22 Sep 2014 10:26:19 +0200
+ -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 22 Sep 2014 17:28:37 +0200
 
 microcom (2014.02.0-1) unstable; urgency=low
 
