@@ -1,7 +1,7 @@
 microcom (2014.09.0-1) UNRELEASED; urgency=medium
 
   * New upstream release
-    + add ipv6 support to rfc2217 mode
+    + Add IPv6 support to RFC2217 mode
   * Standards-Version: 3.9.6 (no changes needed)
 
  -- Uwe Kleine-König <u.kleine-koenig@pengutronix.de>  Mon, 22 Sep 2014 10:26:19 +0200
