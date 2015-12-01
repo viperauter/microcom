@@ -1,3 +1,9 @@
+microcom (2014.09.0-2) UNRELEASED; urgency=medium
+
+  * switch maintainer entry to debian.org address
+
+ -- Uwe Kleine-König <ukleinek@debian.org>  Tue, 01 Dec 2015 08:56:10 +0100
+
 microcom (2014.09.0-1) unstable; urgency=medium
 
   * New upstream release
