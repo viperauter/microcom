@@ -2,14 +2,15 @@ Source: microcom
 Section: comm
 Priority: extra
 Maintainer: Uwe Kleine-König <ukleinek@debian.org>
-Build-Depends: debhelper (>= 9), libreadline6-dev
+Build-Depends: debhelper (>= 9), libreadline6-dev, autoconf, automake
+Build-Conflicts: autoconf2.13, automake1.4
 Standards-Version: 3.9.6
 Homepage: http://git.pengutronix.de/?p=tools/microcom.git
 Vcs-Browser: http://git.pengutronix.de/?p=tools/microcom.git
 Vcs-Git: git://git.pengutronix.de/git/tools/microcom.git -b debian/sid
 
 Package: microcom
-Architecture: linux-any
+Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: minimalistic terminal program
  microcom is a minimalistic terminal program for accessing devices (e.g.

@@ -3,6 +3,10 @@ Upstream-name: microcom
 Source: http://git.pengutronix.de/?p=tools/microcom.git;a=summary
         git://git.pengutronix.de/git/tools/microcom.git
 
+Files: *
+Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
+License: GPL-2+
+
 Files: debian/*
 Copyright: 2009-2013 Alexander Reichle-Schmehl <tolimar@debian.org>
            2014 Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
@@ -16,18 +20,6 @@ Files: commands.c
        commands_fsl_imx.c
        parser.c
 Copyright: 2010 Sascha Hauer <s.hauer@pengutronix.de>
-License: GPL-2+
-
-Files: gitlog2changelog.py
-Copyright: 2008 Marcus D. Hanwell <marcus@cryos.org>
-License: GPL-2+
-
-Files: Makefile
-       microcom.c
-       microcom.h
-       mux.c
-       serial.c
-Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>
 License: GPL-2+
 
 Files: microcom.1

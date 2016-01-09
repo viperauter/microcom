@@ -1,5 +1,9 @@
-microcom (2014.09.0-2) UNRELEASED; urgency=medium
+microcom (2016.01.0-1) UNRELEASED; urgency=medium
 
+  * New upstream release
+    + uses autotools now and autodetects can which allows to build for "any"
+      instead of "linux-any"
+    + LFS fixes
   * switch maintainer entry to debian.org address
 
  -- Uwe Kleine-König <ukleinek@debian.org>  Tue, 01 Dec 2015 08:56:10 +0100
