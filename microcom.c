@@ -30,6 +30,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "config.h"
+
 static struct termios sots;	/* old stdout/in termios settings to restore */
 
 struct ios_ops *ios;
@@ -59,94 +61,91 @@ void restore_terminal(void)
 	tcsetattr(STDIN_FILENO, TCSANOW, &sots);
 }
 
-int baudrate_to_flag(int speed, speed_t *flag)
-{
-	switch(speed) {
-	case 50: *flag = B50; return 0;
-	case 75: *flag = B75; return 0;
-	case 110: *flag = B110; return 0;
-	case 134: *flag = B134; return 0;
-	case 150: *flag = B150; return 0;
-	case 200: *flag = B200; return 0;
-	case 300: *flag = B300; return 0;
-	case 600: *flag = B600; return 0;
-	case 1200: *flag = B1200; return 0;
-	case 1800: *flag = B1800; return 0;
-	case 2400: *flag = B2400; return 0;
-	case 4800: *flag = B4800; return 0;
-	case 9600: *flag = B9600; return 0;
-	case 19200: *flag = B19200; return 0;
-	case 38400: *flag = B38400; return 0;
-	case 57600: *flag = B57600; return 0;
-	case 115200: *flag = B115200; return 0;
-	case 230400: *flag = B230400; return 0;
+static const struct {
+	int speed;
+	speed_t flag;
+} bd_to_flg[] = {
+	{ 50, B50 },
+	{ 75, B75 },
+	{ 110, B110 },
+	{ 134, B134 },
+	{ 150, B150 },
+	{ 200, B200 },
+	{ 300, B300 },
+	{ 600, B600 },
+	{ 1200, B1200},
+	{ 1800, B1800},
+	{ 2400, B2400},
+	{ 4800, B4800},
+	{ 9600, B9600},
+	{ 19200, B19200},
+	{ 38400, B38400},
+	{ 57600, B57600},
+	{ 115200, B115200},
+	{ 230400, B230400},
 #ifdef B460800
-	case 460800: *flag = B460800; return 0;
+	{ 460800, B460800},
 #endif
 #ifdef B500000
-	case 500000: *flag = B500000; return 0;
+	{ 500000, B500000},
 #endif
 #ifdef B576000
-	case 576000: *flag = B576000; return 0;
+	{ 576000, B576000},
 #endif
 #ifdef B921600
-	case 921600: *flag = B921600; return 0;
+	{ 921600, B921600},
 #endif
 #ifdef B1000000
-	case 1000000: *flag = B1000000; return 0;
+	{ 1000000, B1000000},
 #endif
 #ifdef B1152000
-	case 1152000: *flag = B1152000; return 0;
+	{ 1152000, B1152000},
 #endif
 #ifdef B1500000
-	case 1500000: *flag = B1500000; return 0;
+	{ 1500000, B1500000},
 #endif
 #ifdef B2000000
-	case 2000000: *flag = B2000000; return 0;
+	{ 2000000, B2000000},
 #endif
 #ifdef B2500000
-	case 2500000: *flag = B2500000; return 0;
+	{ 2500000, B2500000},
 #endif
 #ifdef B3000000
-	case 3000000: *flag = B3000000; return 0;
+	{ 3000000, B3000000},
 #endif
 #ifdef B3500000
-	case 3500000: *flag = B3500000; return 0;
+	{ 3500000, B3500000},
 #endif
 #ifdef B4000000
-	case 4000000: *flag = B4000000; return 0;
+	{ 4000000, B4000000},
 #endif
-	default:
-		printf("unknown speed: %d\n",speed);
-		return -1;
-	}
+};
+
+int baudrate_to_flag(int speed, speed_t *flag)
+{
+	size_t i;
+
+	/* possible optimisation: binary search for speed */
+	for (i = 0; i < ARRAY_SIZE(bd_to_flg); ++i)
+		if (bd_to_flg[i].speed == speed) {
+			*flag = bd_to_flg[i].flag;
+			return 0;
+		}
+
+	printf("unknown speed: %d\n", speed);
+	return -1;
 }
 
 int flag_to_baudrate(speed_t speed)
 {
-	switch(speed) {
-	case B50: return 50;
-	case B75: return 75;
-	case B110: return 110;
-	case B134: return 134;
-	case B150: return 150;
-	case B200: return 200;
-	case B300: return 300;
-	case B600: return 600;
-	case B1200: return 1200;
-	case B1800: return 1800;
-	case B2400: return 2400;
-	case B4800: return 4800;
-	case B9600: return 9600;
-	case B19200: return 19200;
-	case B38400: return 38400;
-	case B57600: return 57600;
-	case B115200: return 115200;
-	case B230400: return 230400;
-	default:
-		printf("unknown speed: %d\n",speed);
-		return -1;
-	}
+	size_t i;
+
+	for (i = 0; i < ARRAY_SIZE(bd_to_flg); ++i)
+		if (bd_to_flg[i].flag == speed)
+			return bd_to_flg[i].speed;
+
+	printf("unknown speed flag: 0x%x\n", (unsigned)speed);
+	return -1;
 }
 
 void microcom_exit(int signal)
@@ -188,6 +187,7 @@ void main_usage(int exitcode, char *str, char *dev)
 		"                                         from stdin\n"
 		"    -a,  --answerback=<str>              specify the answerback string sent as response to\n"
 		"                                         an ENQ (ASCII 0x05) Character\n"
+		"    -v, --version                        print version string\n"
 		"    -h, --help                           This help\n",
 		DEFAULT_DEVICE, DEFAULT_BAUDRATE,
 		DEFAULT_CAN_INTERFACE, DEFAULT_CAN_ID, DEFAULT_CAN_ID);
@@ -196,7 +196,7 @@ void main_usage(int exitcode, char *str, char *dev)
 }
 
 int opt_force = 0;
-int current_speed = DEFAULT_BAUDRATE;
+unsigned long current_speed = DEFAULT_BAUDRATE;
 int current_flow = FLOW_NONE;
 int listenonly = 0;
 
@@ -209,7 +209,6 @@ int main(int argc, char *argv[])
 	char *interfaceid = NULL;
 	char *device = DEFAULT_DEVICE;
 	char *logfile = NULL;
-	speed_t flag;
 
 	struct option long_options[] = {
 		{ "help", no_argument, 0, 'h' },
@@ -222,15 +221,22 @@ int main(int argc, char *argv[])
 		{ "logfile", required_argument, 0, 'l'},
 		{ "listenonly", no_argument, 0, 'o'},
 		{ "answerback", required_argument, 0, 'a'},
+		{ "version", no_argument, 0, 'v' },
 		{ 0, 0, 0, 0},
 	};
 
-	while ((opt = getopt_long(argc, argv, "hp:s:t:c:dfl:oi:a:", long_options, NULL)) != -1) {
+	while ((opt = getopt_long(argc, argv, "hp:s:t:c:dfl:oi:a:v", long_options, NULL)) != -1) {
 		switch (opt) {
-			case 'h':
 			case '?':
 				main_usage(1, "", "");
-				exit(0);
+				break;
+			case 'h':
+				main_usage(0, "", "");
+				break;
+			case 'v':
+				printf("%s\n", PACKAGE_VERSION);
+				exit(EXIT_SUCCESS);
+				break;
 			case 'p':
 				device = optarg;
 				break;
@@ -277,9 +283,14 @@ int main(int argc, char *argv[])
 
 	if (telnet)
 		ios = telnet_init(hostport);
-	else if (can)
+	else if (can) {
+#ifdef USE_CAN
 		ios = can_init(interfaceid);
-	else
+#else
+		fprintf(stderr, "CAN mode not supported\n");
+		exit(EXIT_FAILURE);
+#endif
+	} else
 		ios = serial_init(device);
 
 	if (!ios)
@@ -291,12 +302,10 @@ int main(int argc, char *argv[])
 			exit(1);
 	}
 
-	ret = baudrate_to_flag(current_speed, &flag);
-	if (ret)
-		exit(1);
-
 	current_flow = FLOW_NONE;
-	ios->set_speed(ios, flag);
+	if (ios->set_speed(ios, current_speed))
+		exit(EXIT_FAILURE);
+
 	ios->set_flow(ios, current_flow);
 
 	if (!listenonly) {

@@ -47,13 +47,20 @@ static void init_comm(struct termios *pts)
 	pts->c_iflag &= ~ICRNL;
 }
 
-static int serial_set_speed(struct ios_ops *ios, speed_t speed)
+static int serial_set_speed(struct ios_ops *ios, unsigned long speed)
 {
 	struct termios pts;	/* termios settings on port */
+	speed_t flag;
+	int ret;
 
 	tcgetattr(ios->fd, &pts);
-	cfsetospeed(&pts, speed);
-	cfsetispeed(&pts, speed);
+
+	ret = baudrate_to_flag(speed, &flag);
+	if (ret)
+		return ret;
+
+	cfsetospeed(&pts, flag);
+	cfsetispeed(&pts, flag);
 	tcsetattr(ios->fd, TCSANOW, &pts);
 
 	return 0;
@@ -110,6 +117,8 @@ static void serial_exit(struct ios_ops *ios)
 	serial_unlock();
 }
 
+#define BUFLEN 512
+
 struct ios_ops * serial_init(char *device)
 {
 	struct termios pts;	/* termios settings on port */
@@ -117,11 +126,12 @@ struct ios_ops * serial_init(char *device)
 	int fd;
 	char *substring;
 	long pid;
+	int ret;
 
 	ops = malloc(sizeof(*ops));
 	if (!ops)
 		return NULL;
-	lockfile = malloc(PATH_MAX);
+	lockfile = malloc(BUFLEN);
 	if (!lockfile)
 		return NULL;
 
@@ -137,7 +147,11 @@ struct ios_ops * serial_init(char *device)
 	else
 		substring = device;
 
-	sprintf(lockfile, "/var/lock/LCK..%s", substring);
+	ret = snprintf(lockfile, BUFLEN, "/var/lock/LCK..%s", substring);
+	if (ret >= BUFLEN) {
+		printf("path to lockfile too long\n");
+		exit(1);
+	}
 
 	fd = open(lockfile, O_RDONLY);
 	if (fd >= 0 && !opt_force) {
