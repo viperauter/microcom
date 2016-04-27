@@ -1,8 +1,9 @@
 microcom (2016.01.0-1) unstable; urgency=medium
 
   * New upstream release
-    + uses autotools now and autodetects can which allows to build for "any"
-      instead of "linux-any"
+    + microcom now uses autotools.  It also autodetects the presence of
+      include files needed for CAN support. This allows using "any" instead of
+      "linux-any" as the build-target.
     + LFS fixes
   * switch maintainer entry to debian.org address
 
