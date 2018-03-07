@@ -8,11 +8,4 @@ binary: binary-arch binary-indep
 build-arch build-indep build install binary-arch binary-indep binary clean:
 	dh $@
 
-# Create orig.tar.gz as upstream only provides tags in git.
-# This target doesn't comply to Debian policy because it cannot currently be
-# called from any directory. Also it should determine $upstreamversion
-# automatically. Patches welcome.
-#get-orig-source:
-#	git archive --format=tar --prefix=microcom-$upstreamversion.orig/ $upstreamtag | gzip -n --best > microcom_$upstreamversion.orig.tar.gz
-
 .PHONY: build-arch build-indep build install binary-arch binary-indep binary clean get-orig-source
