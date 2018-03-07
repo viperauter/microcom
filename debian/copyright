@@ -1,7 +1,6 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-name: microcom
-Source: http://git.pengutronix.de/?p=tools/microcom.git;a=summary
-        git://git.pengutronix.de/git/tools/microcom.git
+Source: https://git.pengutronix.de/cgit/tools/microcom
 
 Files: *
 Copyright: 1999 Anca and Lucian Jurubita <ljurubita@hotmail.com>

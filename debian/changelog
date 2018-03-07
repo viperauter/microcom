@@ -1,6 +1,7 @@
 microcom (2016.01.0-2) UNRELEASED; urgency=medium
 
-  * update debian/watch to find new upstream releases
+  * Update debian/watch to find new upstream releases.
+  * Update VCS-* to provide confidentiality.
 
  -- Uwe Kleine-König <ukleinek@debian.org>  Wed, 07 Mar 2018 09:08:25 +0100
 

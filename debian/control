@@ -5,9 +5,8 @@ Maintainer: Uwe Kleine-König <ukleinek@debian.org>
 Build-Depends: debhelper (>= 9), libreadline6-dev, autoconf, automake
 Build-Conflicts: autoconf2.13, automake1.4
 Standards-Version: 3.9.6
-Homepage: http://git.pengutronix.de/?p=tools/microcom.git
-Vcs-Browser: http://git.pengutronix.de/?p=tools/microcom.git
-Vcs-Git: git://git.pengutronix.de/git/tools/microcom.git -b debian/sid
+Vcs-Browser: https://git.pengutronix.de/cgit/tools/microcom
+Vcs-Git: https://git.pengutronix.de/git/tools/microcom -b debian/sid
 
 Package: microcom
 Architecture: any
