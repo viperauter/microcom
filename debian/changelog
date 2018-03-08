@@ -1,3 +1,11 @@
+microcom (2017.03.0-2) UNRELEASED; urgency=medium
+
+  * Simplify debian/watch
+    There are now provides signatures for the compressed archive which allows
+    to use pgpmode=auto.
+
+ -- Uwe Kleine-König <ukleinek@debian.org>  Thu, 08 Mar 2018 10:27:45 +0100
+
 microcom (2017.03.0-1) unstable; urgency=medium
 
   * Update debian/watch to find new upstream releases.
