@@ -34,7 +34,7 @@ static void init_comm(struct termios *pts)
 	/* some things we want to set arbitrarily */
 	pts->c_lflag &= ~ICANON;
 	pts->c_lflag &= ~(ECHO | ECHOCTL | ECHONL);
-	pts->c_cflag |= HUPCL;
+	pts->c_cflag |= HUPCL | CREAD | CLOCAL;
 	pts->c_iflag |= IGNBRK;
 	pts->c_cc[VMIN] = 1;
 	pts->c_cc[VTIME] = 0;
@@ -46,6 +46,16 @@ static void init_comm(struct termios *pts)
 	 */
 	pts->c_oflag &= ~ONLCR;
 	pts->c_iflag &= ~ICRNL;
+}
+
+static ssize_t serial_write(struct ios_ops *ios, const void *buf, size_t count)
+{
+	return write(ios->fd, buf, count);
+}
+
+static ssize_t serial_read(struct ios_ops *ios, void *buf, size_t count)
+{
+	return read(ios->fd, buf, count);
 }
 
 static int serial_set_handshake_line(struct ios_ops *ios, int pin, int enable)
@@ -158,11 +168,14 @@ struct ios_ops * serial_init(char *device)
 	if (!lockfile)
 		return NULL;
 
+	ops->write = serial_write;
+	ops->read = serial_read;
 	ops->set_speed = serial_set_speed;
 	ops->set_flow = serial_set_flow;
 	ops->set_handshake_line = serial_set_handshake_line;
 	ops->send_break = serial_send_break;
 	ops->exit = serial_exit;
+	ops->istelnet = false;
 
 	/* check lockfile */
 	substring = strrchr(device, '/');

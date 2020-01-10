@@ -26,14 +26,24 @@
 
 #include "microcom.h"
 
+static ssize_t telnet_write(struct ios_ops *ios, const void *buf, size_t count)
+{
+	return write(ios->fd, buf, count);
+}
+
+static ssize_t telnet_read(struct ios_ops *ios, void *buf, size_t count)
+{
+	return read(ios->fd, buf, count);
+}
+
 static int telnet_set_speed(struct ios_ops *ios, unsigned long speed)
 {
 
-//	unsigned char buf1[] = {IAC, WILL , COM_PORT_OPTION};
-	unsigned char buf2[] = {IAC, SB, COM_PORT_OPTION, SET_BAUDRATE_CS, 0, 0, 0, 0, IAC, SE};
+	unsigned char buf2[] = {IAC, SB, TELNET_OPTION_COM_PORT_CONTROL, SET_BAUDRATE_CS, 0, 0, 0, 0, IAC, SE};
 	int *speedp = (int *)&buf2[4];
 
 	*speedp = htonl(speed);
+	dbg_printf("-> IAC SB COM_PORT_CONTROL SET_BAUDRATE_CS 0x%lx IAC SE\n", speed);
 	write(ios->fd, buf2, 10);
 
 	return 0;
@@ -41,7 +51,7 @@ static int telnet_set_speed(struct ios_ops *ios, unsigned long speed)
 
 static int telnet_set_flow(struct ios_ops *ios, int flow)
 {
-	unsigned char buf2[] = {IAC, SB, COM_PORT_OPTION, SET_CONTROL_CS, 0, IAC, SE};
+	unsigned char buf2[] = {IAC, SB, TELNET_OPTION_COM_PORT_CONTROL, SET_CONTROL_CS, 0, IAC, SE};
 
 	switch (flow) {
 	case FLOW_NONE:
@@ -58,6 +68,7 @@ static int telnet_set_flow(struct ios_ops *ios, int flow)
 		break;
 	}
 
+	dbg_printf("-> IAC SB COM_PORT_CONTROL SET_CONTROL_CS %d IAC SE\n", buf2[4]);
 	write(ios->fd, buf2, sizeof(buf2));
 
 	return 0;
@@ -91,10 +102,13 @@ struct ios_ops *telnet_init(char *hostport)
 	if (!ios)
 		return NULL;
 
+	ios->write = telnet_write;
+	ios->read = telnet_read;
 	ios->set_speed = telnet_set_speed;
 	ios->set_flow = telnet_set_flow;
 	ios->send_break = telnet_send_break;
 	ios->exit = telnet_exit;
+	ios->istelnet = true;
 
 	memset(&hints, '\0', sizeof(hints));
 	hints.ai_flags = AI_ADDRCONFIG;
@@ -149,10 +163,17 @@ struct ios_ops *telnet_init(char *hostport)
 				  connected_host, sizeof(connected_host),
 				  connected_port, sizeof(connected_port),
 				  NI_NUMERICHOST | NI_NUMERICSERV);
-		if (ret)
+		if (ret) {
 			fprintf(stderr, "getnameinfo: %s\n", gai_strerror(ret));
-		else
-			printf("connected to %s (port %s)\n", connected_host, connected_port);
+			goto out;
+		}
+		printf("connected to %s (port %s)\n", connected_host, connected_port);
+
+		/* send intent to do and accept COM_PORT stuff */
+		dbg_printf("-> WILL COM_PORT_CONTROL\n");
+		dprintf(sock, "%c%c%c", IAC, WILL, TELNET_OPTION_COM_PORT_CONTROL);
+		dbg_printf("-> DO COM_PORT_CONTROL\n");
+		dprintf(sock, "%c%c%c", IAC, DO, TELNET_OPTION_COM_PORT_CONTROL);
 		goto out;
 	}
 

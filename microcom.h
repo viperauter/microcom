@@ -26,6 +26,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <signal.h>
 #include <string.h>
 #include <termios.h>
@@ -38,6 +39,8 @@
 #define DEFAULT_CAN_ID (0x200)
 
 struct ios_ops {
+	ssize_t (*write)(struct ios_ops *, const void *buf, size_t count);
+	ssize_t (*read)(struct ios_ops *, void *buf, size_t count);
 	int (*set_speed)(struct ios_ops *, unsigned long speed);
 #define FLOW_NONE	0
 #define FLOW_SOFT	1
@@ -48,6 +51,7 @@ struct ios_ops {
 	int (*set_handshake_line)(struct ios_ops *, int pin, int enable);
 	int (*send_break)(struct ios_ops *);
 	void (*exit)(struct ios_ops *);
+	bool istelnet;
 	int fd;
 };
 
@@ -118,10 +122,19 @@ extern int current_flow;
 int do_commandline(void);
 int do_script(char *script);
 
-#define dprintf(fmt,args...)  ({ if (debug) printf (fmt ,##args); })
+#define dbg_printf(fmt,args...)  ({ if (debug) printf(fmt ,##args); })
+
+/*
+ * Some telnet options according to
+ * https://www.iana.org/assignments/telnet-options/telnet-options.xhtmls
+ */
+
+#define TELNET_OPTION_BINARY_TRANSMISSION		0
+#define TELNET_OPTION_ECHO				1
+#define TELNET_OPTION_SUPPRESS_GO_AHEAD			3
+#define TELNET_OPTION_COM_PORT_CONTROL			44
 
 /* RFC2217 */
-#define COM_PORT_OPTION		 44
 #define SET_BAUDRATE_CS		  1
 #define SET_DATASIZE_CS		  2
 #define SET_PARITY_CS		  3

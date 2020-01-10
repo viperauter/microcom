@@ -1,4 +1,4 @@
-AC_INIT([microcom], [2017.03.0], [oss-tools@pengutronix.de])
+AC_INIT([microcom], [2019.01.0], [oss-tools@pengutronix.de])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AM_INIT_AUTOMAKE([dist-xz])
@@ -9,7 +9,6 @@ AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
 AC_PROG_CC
-AX_PTHREAD
 AC_SYS_LARGEFILE
 
 # Checks for libraries.
@@ -38,10 +37,7 @@ AS_IF([test "x$enable_can" != "xno"],
       ])
 
 AS_IF([test "x$enable_can" = "xyes"],
-      [AC_DEFINE([USE_CAN], [1], [Define if can mode should be built-in])
-       LIBS="$PTHREAD_LIBS $LIBS"
-       CFLAGS="$CFLAGS $PTHREAD_CFLAGS"
-       CC="$PTHREAD_CC"])
+      [AC_DEFINE([USE_CAN], [1], [Define if can mode should be built-in])])
 
 AM_CONDITIONAL([CAN], [test "x$enable_can" = "xyes"])
 
