@@ -2,6 +2,7 @@ microcom (2019.01.0-1) UNRELEASED; urgency=medium
 
   * New upstream release
   * Add "Rules-Requires-Root: no"
+  * Standards-Version: 4.4.1 (no changes needed)
 
  -- Uwe Kleine-König <ukleinek@debian.org>  Fri, 10 Jan 2020 21:45:53 +0100
 

@@ -1,5 +1,7 @@
 #!/usr/bin/make -f
 
+DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
 build: build-arch build-indep
 install: build
 binary-arch binary-indep: install
