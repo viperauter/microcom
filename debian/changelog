@@ -1,3 +1,10 @@
+microcom (2019.01.0-1) UNRELEASED; urgency=medium
+
+  * New upstream release
+  * Add "Rules-Requires-Root: no"
+
+ -- Uwe Kleine-König <ukleinek@debian.org>  Fri, 10 Jan 2020 21:45:53 +0100
+
 microcom (2017.03.0-2) unstable; urgency=medium
 
   * Simplify debian/watch
